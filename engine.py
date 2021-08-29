@@ -14,16 +14,16 @@ from keras.utils.data_utils import get_file
 
 # Load models and support
 first_gate = VGG16(weights='imagenet')
-print "First gate loaded"
+print ("First gate loaded")
 second_gate = load_model('static/models/d1_ft_model.h5')
-print "Second gate loaded"
+print ("Second gate loaded")
 location_model = load_model('static/models/d2_ft_model.h5')
-print "Location model loaded"
+print ("Location model loaded")
 severity_model = load_model('static/models/d3_ft_model.h5')
-print "Severity model loaded"
+print ("Severity model loaded")
 with open('static/models/vgg16_cat_list.pk', 'rb') as f:
 	cat_list = pk.load(f)
-print "Cat list loaded"
+print ("Cat list loaded")
 
 # from Keras GitHub  
 CLASS_INDEX = None
@@ -57,7 +57,7 @@ def prepare_img_224(img_path):
 	return x
 
 def car_categories_gate(img_224, model):
-	print "Validating that this is a picture of your car..."
+	print ("Validating that this is a picture of your car...")
 	out = model.predict(img_224)
 	top = get_predictions(out, top=5)
 	for j in top[0]:
@@ -73,17 +73,17 @@ def prepare_img_256(img_path):
 	return x
 
 def car_damage_gate(img_256, model):
-	print "Validating that damage exists..."
+	print ("Validating that damage exists...")
 	pred = model.predict(img_256)
 	if pred[0][0] <=.5:
-		return True # print "Validation complete - proceed to location and severity determination"
+		return True # print ("Validation complete - proceed to location and severity determination")
 	else:
 		return False
-		# print "Are you sure that your car is damaged? Please submit another picture of the damage."
-		# print "Hint: Try zooming in/out, using a different angle or different lighting"
+		# print ("Are you sure that your car is damaged? Please submit another picture of the damage.")
+		# print ("Hint: Try zooming in/out, using a different angle or different lighting")
 
 def location_assessment(img_256, model):
-	print "Determining location of damage..."
+	print ("Determining location of damage...")
 	pred = model.predict(img_256)
 	pred_label = np.argmax(pred, axis=1)
 	d = {0: 'Front', 1: 'Rear', 2: 'Side'}
@@ -94,7 +94,7 @@ def location_assessment(img_256, model):
 	# print "Location assessment complete."
 
 def severity_assessment(img_256, model):
-	print "Determining severity of damage..."
+	print ("Determining severity of damage...")
 	pred = model.predict(img_256)
 	pred_label = np.argmax(pred, axis=1)
 	d = {0: 'Minor', 1: 'Moderate', 2: 'Severe'}
@@ -102,7 +102,7 @@ def severity_assessment(img_256, model):
 		if pred_label[0] == key:
 			return d[key]
 	# 		print "Assessment: {} damage to vehicle".format(d[key])
-	# print "Severity assessment complete."
+	# print ("Severity assessment complete.")
 
 # load models
 def engine(img_path):
